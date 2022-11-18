@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_background"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="?android:attr/autofilledHighlight" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected Date"
+        app:layout_constraintStart_toStartOf="@+id/iv_background"
+        app:layout_constraintEnd_toEndOf="@+id/iv_background"
+        app:layout_constraintTop_toTopOf="@+id/iv_background"
+        app:layout_constraintBottom_toTopOf="@+id/et_eggcount"
+        app:layout_constraintHorizontal_bias="0.5"
+        tools:layout_editor_absoluteY="34dp" />
+
+    <TextView
+        android:id="@+id/tv_update_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How many eggs did you collect on this day?"
+        app:layout_constraintStart_toStartOf="@+id/iv_background"
+        app:layout_constraintEnd_toEndOf="@+id/iv_background"
+        app:layout_constraintTop_toBottomOf="@+id/tv_date"
+        app:layout_constraintBottom_toTopOf="@+id/et_eggcount"
+        app:layout_constraintHorizontal_bias="0.5"
+        tools:layout_editor_absoluteY="34dp" />
+
+    <EditText
+        android:id="@+id/et_eggcount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="5"
+        android:hint="Egg number"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="@+id/iv_background"
+        app:layout_constraintEnd_toEndOf="@+id/iv_background"
+        app:layout_constraintTop_toBottomOf="@+id/tv_date"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_background"
+        />
+
+    <Button
+        android:id="@+id/bt_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        app:layout_constraintStart_toStartOf="@+id/iv_background"
+        app:layout_constraintEnd_toEndOf="@+id/iv_background"
+        app:layout_constraintTop_toBottomOf="@+id/et_eggcount"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_background"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
