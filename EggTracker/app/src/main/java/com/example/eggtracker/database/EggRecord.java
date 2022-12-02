@@ -1,27 +1,25 @@
 package com.example.eggtracker.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
+import java.util.List;
 
-@Entity(tableName = "eggs_table")
+@Entity(tableName = "eggs_table", primaryKeys = {"year","month"})
 public class EggRecord {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @NonNull
     private String year;
+    @NonNull
     private String month;
-    private ArrayList<Integer> days;
+    private List<String> days;
 
-    public EggRecord(String year, String month, ArrayList<Integer> days) {
+    public EggRecord( String year, String month, List<String> days) {
         this.year = year;
         this.month = month;
         this.days = days;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getYear() {
@@ -32,11 +30,8 @@ public class EggRecord {
         return month;
     }
 
-    public ArrayList<Integer> getDays() {
+    public List<String> getDays() {
         return days;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 }

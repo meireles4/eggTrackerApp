@@ -8,16 +8,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eggtracker.database.EggRecord;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
 {
 
-    public final ArrayList<String> eggsOfMonth;
-    private final ArrayList<String> daysOfMonth;
+    public List<String> eggsOfMonth;
+    private final List<String> daysOfMonth;
     private final OnItemListener onItemListener;
 
-    public CalendarAdapter(ArrayList<String> eggsOfMonth, ArrayList<String> daysOfMonth, OnItemListener onItemListener) {
+    public CalendarAdapter(List<String> eggsOfMonth, List<String> daysOfMonth, OnItemListener onItemListener) {
         this.eggsOfMonth = eggsOfMonth;
         this.daysOfMonth = daysOfMonth;
         this.onItemListener = onItemListener;
@@ -56,8 +59,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
         return daysOfMonth.size();
     }
 
-    public void updateEggArray(int position, String value){
-        eggsOfMonth.set(position, value);
+    public void setEggRecords(ArrayList<String> days){
+        this.eggsOfMonth = days;
+        notifyDataSetChanged();
     }
 
     public interface OnItemListener {

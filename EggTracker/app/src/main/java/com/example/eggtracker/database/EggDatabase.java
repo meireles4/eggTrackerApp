@@ -1,7 +1,10 @@
 package com.example.eggtracker.database;
 
+import static java.lang.String.valueOf;
+
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -10,7 +13,10 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.List;
 
 @Database(entities = EggRecord.class, version = 1)
 @TypeConverters({Converters.class})
@@ -27,6 +33,7 @@ public abstract class EggDatabase extends RoomDatabase {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     EggDatabase.class, "egg_database")
                     .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .addCallback(roomCallback)
                     .build();
         }
@@ -37,6 +44,7 @@ public abstract class EggDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+
             new PopulateDbAsyncTask(instance).execute();
         }
     };
@@ -50,21 +58,35 @@ public abstract class EggDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            String year = "2022";
-            String month = "11";
-            ArrayList<Integer> eggs_11 = new ArrayList<>();
-            for(int i = 1; i <= 30; i++){
-                eggs_11.add(1);
-            }
-            eggRecordDao.insert(new EggRecord(year, month, eggs_11));
+            Log.d("TEST", "ROOM ONCREATE STARTED");
+            LocalDate localDate = LocalDate.now();
 
-            month = "12";
-            ArrayList<Integer> eggs_12 = new ArrayList<>();
-            for(int i = 1; i <= 31; i++){
-                eggs_12.add(2);
-            }
-            eggRecordDao.insert(new EggRecord(year, month, eggs_12));
+            while(localDate.getYear() <= 2023){
+                List<String> list = new ArrayList<>();
 
+                for(int i = 0; i < YearMonth.from(localDate).lengthOfMonth() ; i++){
+                    list.add("0");
+                }
+                EggRecord e = new EggRecord(valueOf(localDate.getYear()), localDate.getMonth().toString(), list);
+                eggRecordDao.insert(e);
+
+                localDate = localDate.plusMonths(1);
+            }
+
+            localDate = LocalDate.now().minusMonths(1);
+            while(localDate.getYear() == 2022){
+                List<String> list = new ArrayList<>();
+
+                for(int i = 0; i < YearMonth.from(localDate).lengthOfMonth() ; i++){
+                    list.add("0");
+                }
+                EggRecord e = new EggRecord(valueOf(localDate.getYear()), localDate.getMonth().toString(), list);
+                eggRecordDao.insert(e);
+
+                localDate = localDate.minusMonths(1);
+            }
+
+            Log.d("TEST", "ROOM ONCREATE FINISHED");
             return null;
         }
     }

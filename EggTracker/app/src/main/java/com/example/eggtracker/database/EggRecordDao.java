@@ -7,6 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -24,9 +25,13 @@ public interface EggRecordDao {
     @Query("DELETE FROM eggs_table")
     void deleteAllEggRecords();
 
-    @Query("SELECT * FROM eggs_table ORDER BY year, month DESC")
-    LiveData<List<EggRecord>> getAllEggRecords();
+    @Query("SELECT * FROM eggs_table")
+    LiveData<List<EggRecord>> getAllEggRecordsLiveData();
 
+    @Query("SELECT * FROM eggs_table")
+    List<EggRecord> getAllEggRecords();
 
+    @Query("SELECT * from eggs_table WHERE year = :year AND month = :month")
+    EggRecord getEggRecord(String year, String month);
 
 }
