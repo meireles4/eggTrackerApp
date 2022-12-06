@@ -1,23 +1,34 @@
 package com.example.eggtracker;
 
+import static java.lang.String.valueOf;
+
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eggtracker.database.EggRecord;
+import com.google.android.material.appbar.AppBarLayout;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener {
@@ -26,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
     private TextView monthYearText;
     private RecyclerView calendarRecyclerView;
+
+    DatePickerDialog picker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +54,31 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         nextMonth.setOnClickListener(this::nextMonthAction);
 
         eggViewModel = new ViewModelProvider(this).get(EggViewModel.class);
+
+        ActionMenuItemView topMenuCalendar = findViewById(R.id.menu_calendar);
+
+        topMenuCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Calendar cldr = Calendar.getInstance();
+                int day = 1;
+                int month = eggViewModel.getSelectedDate().getMonth().getValue()-1;
+                int year = eggViewModel.getSelectedDate().getYear();
+
+                picker = new DatePickerDialog(MainActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                //monthOfYear = [0-11]. That's why we add +1
+                                LocalDate localDate = LocalDate.of(year, monthOfYear+1, 1);
+                                eggViewModel.setSelectedDate(localDate);
+                                setMonthView();
+                            }
+                        }, year, month, day);
+                picker.show();
+            }
+        });
 
         eggViewModel.setSelectedDate(LocalDate.now());
         setMonthView();
@@ -113,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
                     daysInMonthArray.add("");
                 }
                 else{
-                    daysInMonthArray.add(String.valueOf(i));
+                    daysInMonthArray.add(valueOf(i));
                 }
             }
             //----------
@@ -122,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
                     daysInMonthArray.add("");
                 }
                 else{
-                    daysInMonthArray.add(String.valueOf(i - firstDayOfWeek));
+                    daysInMonthArray.add(valueOf(i - firstDayOfWeek));
                 }
             }
         }
