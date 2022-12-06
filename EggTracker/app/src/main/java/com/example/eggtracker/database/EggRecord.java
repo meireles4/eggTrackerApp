@@ -2,9 +2,7 @@ package com.example.eggtracker.database;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "eggs_table", primaryKeys = {"year","month"})

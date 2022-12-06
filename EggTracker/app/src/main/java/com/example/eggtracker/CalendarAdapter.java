@@ -1,6 +1,5 @@
 package com.example.eggtracker;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,14 +7,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.eggtracker.database.EggRecord;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
 {
-
     public List<String> eggsOfMonth;
     private final List<String> daysOfMonth;
     private final OnItemListener onItemListener;
@@ -51,7 +46,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
         if(eggsOfMonth.get(position) == ""){
             holder.eggImage.setVisibility(View.GONE);
         }
-
     }
 
     @Override
@@ -59,12 +53,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
         return daysOfMonth.size();
     }
 
-    public void setEggRecords(ArrayList<String> days){
-        this.eggsOfMonth = days;
-        notifyDataSetChanged();
-    }
-
     public interface OnItemListener {
         void onItemClick(int position, String dayText, String eggCount);
     }
+
+
 }

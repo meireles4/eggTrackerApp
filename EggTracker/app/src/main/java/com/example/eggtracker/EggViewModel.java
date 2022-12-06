@@ -3,7 +3,6 @@ package com.example.eggtracker;
 import static java.lang.String.valueOf;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -74,8 +73,28 @@ public class EggViewModel extends AndroidViewModel {
     }
 
     private void updateCurrentMonthRecord(){
-        EggRecord egg = getEggRecord(valueOf(selectedDate.getYear()), selectedDate.getMonth().toString());
-        Log.d("TEST", "updateCurrentMonthRecord() -> getEggRecord: " + "year " + egg.getYear() + "; month " + egg.getMonth() + "; days " + egg.getDays().toString());
-        currentMonthRecord = egg;
+        EggRecord eggRecord = getEggRecord(valueOf(selectedDate.getYear()), selectedDate.getMonth().toString());
+
+        if(eggRecord != null){
+            currentMonthRecord = eggRecord;
+        }
+        else{
+            eggRecord = newEmptyRecord();
+            insert(eggRecord);
+            currentMonthRecord = eggRecord;
+        }
+    }
+
+    private EggRecord newEmptyRecord(){
+        List<String> l = new ArrayList<>();
+        YearMonth yearMonth = YearMonth.from(selectedDate);
+        int daysInMonth = yearMonth.lengthOfMonth();
+
+        for( int i = 0; i < daysInMonth; i++){
+            l.add("0");
+        }
+
+        EggRecord e = new EggRecord(valueOf(selectedDate.getYear()), selectedDate.getMonth().toString(), l);
+        return e;
     }
 }

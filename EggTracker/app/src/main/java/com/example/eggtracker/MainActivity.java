@@ -2,36 +2,23 @@ package com.example.eggtracker;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eggtracker.database.EggRecord;
-import com.example.eggtracker.database.EggRecordDao;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener {
 
@@ -55,17 +42,9 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
         eggViewModel = new ViewModelProvider(this).get(EggViewModel.class);
 
-        eggViewModel.getAllEggRecordsLiveData().observe(this, eggRecordList -> {
-            Log.d("TEST", "ObserverLiveData: DataChanged");
-        });
-
-        //eggViewModel.deleteAllEggRecords();
-
         eggViewModel.setSelectedDate(LocalDate.now());
         setMonthView();
     }
-
-
 
     private void setMonthView() {
 
@@ -82,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
-
     }
 
     //Gets current month record from viewmodel and builds the array corresponding to the days
@@ -90,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
         //get eggs list from DB
         List<String> list = eggViewModel.getCurrentMonthRecord().getDays();
-        Log.d("TEST", "EggsInMonthArray() -> getCurrentMonth: " + list.toString());
         List<String> eggsInMonth = new ArrayList<>(list);
 
         //Fill with 0s before
@@ -172,11 +149,10 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
     @Override
     public void onItemClick(int position, String dayText, String eggCount) {
-
-            String messageDay = dayText + " " + monthYearFromDate(eggViewModel.getSelectedDate());
-            if(dayText != ""){
-                showUpdateDialog(position ,messageDay, eggCount);
-            }
+        String messageDay = dayText + " " + monthYearFromDate(eggViewModel.getSelectedDate());
+        if(dayText != ""){
+            showUpdateDialog(position ,messageDay, eggCount);
+        }
     }
 
     private void showUpdateDialog(int position, String dayText, String eggCount) {
@@ -199,7 +175,11 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
                 int dayChanged = Integer.parseInt(dayText.split(" ")[0]);
 
                 EggRecord e = eggViewModel.getCurrentMonthRecord();
+
+                //Get direct reference of viewModel property. Change it directly.
+                //No need to set the value with a setter function or use setSelectedDate()
                 List<String> l = e.getDays();
+
                 l.set(dayChanged-1, updatedEggCount);
                 EggRecord eNew = new EggRecord(e.getYear(), e.getMonth(), l);
                 eggViewModel.update(eNew);

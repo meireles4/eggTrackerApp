@@ -10,7 +10,6 @@ import com.example.eggtracker.database.EggDatabase;
 import com.example.eggtracker.database.EggRecord;
 import com.example.eggtracker.database.EggRecordDao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EggRecordRepository {
