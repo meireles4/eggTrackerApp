@@ -1,5 +1,6 @@
 package com.example.eggtracker;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,9 +30,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
         View view = inflater.inflate(R.layout.calendar_cell, parent, false);
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
 
-        //I don't use this line because parent.getHeight() is not always the same for same screen
-        //int viewHolderHeight = (int) (parent.getHeight() * 0.166666666);
-        int viewHolderHeight = 300;
+        int viewHolderHeight = (int) (parent.getHeight() / 6);
 
         layoutParams.height = viewHolderHeight;
         return new CalendarViewHolder(view, onItemListener);
@@ -56,6 +55,4 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
     public interface OnItemListener {
         void onItemClick(int position, String dayText, String eggCount);
     }
-
-
 }

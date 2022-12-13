@@ -1,65 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/iv_background"
-        android:layout_width="400dp"
-        android:layout_height="200dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="?android:attr/autofilledHighlight" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp">
 
-    <TextView
-        android:id="@+id/tv_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Selected Date"
-        app:layout_constraintStart_toStartOf="@+id/iv_background"
-        app:layout_constraintEnd_toEndOf="@+id/iv_background"
-        app:layout_constraintTop_toTopOf="@+id/iv_background"
-        app:layout_constraintBottom_toTopOf="@+id/et_eggcount"
-        app:layout_constraintHorizontal_bias="0.5"
-        tools:layout_editor_absoluteY="34dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_update_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="How many eggs did you collect on this day?"
-        app:layout_constraintStart_toStartOf="@+id/iv_background"
-        app:layout_constraintEnd_toEndOf="@+id/iv_background"
-        app:layout_constraintTop_toBottomOf="@+id/tv_date"
-        app:layout_constraintBottom_toTopOf="@+id/et_eggcount"
-        app:layout_constraintHorizontal_bias="0.5"
-        tools:layout_editor_absoluteY="34dp" />
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selected Date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/et_eggcount" />
 
-    <EditText
-        android:id="@+id/et_eggcount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="5"
-        android:hint="Egg number"
-        android:inputType="number"
-        app:layout_constraintStart_toStartOf="@+id/iv_background"
-        app:layout_constraintEnd_toEndOf="@+id/iv_background"
-        app:layout_constraintTop_toBottomOf="@+id/tv_date"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_background"
-        />
+            <EditText
+                android:id="@+id/et_eggcount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="2"
+                android:ems="2"
+                android:textAlignment="center"
+                android:inputType="number"
+                android:textSize="25dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_date"
+                app:layout_constraintBottom_toTopOf="@id/bt_update"
+                />
 
-    <Button
-        android:id="@+id/bt_update"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update"
-        app:layout_constraintStart_toStartOf="@+id/iv_background"
-        app:layout_constraintEnd_toEndOf="@+id/iv_background"
-        app:layout_constraintTop_toBottomOf="@+id/et_eggcount"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_background"/>
+            <Button
+                android:id="@+id/bt_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_eggcount"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationViewCrackingEgg_UpdateScreen"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                app:lottie_rawRes="@raw/cracking_egg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

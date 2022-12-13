@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.eggtracker.database.EggRecord;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -37,8 +39,14 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
     private TextView monthYearText;
     private RecyclerView calendarRecyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    CalendarAdapter calendarAdapter;
 
     DatePickerDialog picker;
+
+    LottieAnimationView leftArrowAnim, rightArrowAnim;
+
+    List<String> daysInMonth, eggsInMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +54,15 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         setContentView(R.layout.activity_main);
 
         calendarRecyclerView = findViewById(R.id.rv_calendar);
-        monthYearText = findViewById(R.id.tv_monthYear);
-        Button previousMonth = findViewById(R.id.bt_previousMonth);
-        Button nextMonth = findViewById(R.id.bt_nextMonth);
+        layoutManager = new GridLayoutManager(getApplicationContext(), 7);
 
-        previousMonth.setOnClickListener(this::previousMonthAction);
-        nextMonth.setOnClickListener(this::nextMonthAction);
+
+        monthYearText = findViewById(R.id.tv_monthYear);
+        leftArrowAnim = findViewById(R.id.animationViewPreviousMonth);
+        rightArrowAnim = findViewById(R.id.animationViewNextMonth);
+
+        leftArrowAnim.setOnClickListener(this::previousMonthAction);
+        rightArrowAnim.setOnClickListener(this::nextMonthAction);
 
         eggViewModel = new ViewModelProvider(this).get(EggViewModel.class);
 
@@ -90,28 +101,28 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         monthYearText.setText(monthYearFromDate(eggViewModel.getSelectedDate()));
 
         //build days array
-        List<String> daysInMonth = daysInMonthArray(eggViewModel.getSelectedDate());
+        daysInMonth = daysInMonthArray(eggViewModel.getSelectedDate());
 
         //build eggs array
-        List<String> eggsInMonth = eggsInMonthArray(daysInMonth);
+        eggsInMonth = eggsInMonthArray();
 
-        CalendarAdapter calendarAdapter = new CalendarAdapter(eggsInMonth, daysInMonth, this);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
+        calendarAdapter = new CalendarAdapter(eggsInMonth, daysInMonth, this);
+
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
     }
 
     //Gets current month record from viewmodel and builds the array corresponding to the days
-    private List<String> eggsInMonthArray(List<String> daysInMonth) {
+    private List<String> eggsInMonthArray() {
 
         //get eggs list from DB
         List<String> list = eggViewModel.getCurrentMonthRecord().getDays();
-        List<String> eggsInMonth = new ArrayList<>(list);
+        List<String> eggsList = new ArrayList<>(list);
 
         //Fill with 0s before
         for(int i = 0; i < daysInMonth.size()-1; i++){
             if(daysInMonth.get(i) == ""){
-                eggsInMonth.add(0, "");
+                eggsList.add(0, "");
             }
             else{
                 break;
@@ -121,14 +132,14 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         //Fill with 0s after
         for(int i = daysInMonth.size()-1; i > -1; i--){
             if(daysInMonth.get(i) == ""){
-                eggsInMonth.add("");
+                eggsList.add("");
             }
             else{
                 break;
             }
         }
 
-        return eggsInMonth;
+        return eggsList;
     }
 
     //Returns an array filled with empty spaces until day one is on the correct place.
@@ -137,17 +148,17 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
         List<String> daysInMonthArray = new ArrayList<>();
         YearMonth yearMonth = YearMonth.from(date);
-        int daysInMonth = yearMonth.lengthOfMonth();
+        int daysInMonthLength = yearMonth.lengthOfMonth();
 
         //returns a copy of this LocalDate with the day-of-month altered
         LocalDate firstOfMonth = date.withDayOfMonth(1);
         int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
 
-        for (int i = 1; i <= 38; i++){
+        for (int i = 1; i <= 42; i++){
             //This if statement fixes an edge case causing 1st day of month appear in second row
             //leaving first row empty
             if(firstDayOfWeek == 7){
-                if(i > daysInMonth){
+                if(i > daysInMonthLength){
                     daysInMonthArray.add("");
                 }
                 else{
@@ -156,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
             }
             //----------
             else{
-                if(i <= firstDayOfWeek || i > daysInMonth + firstDayOfWeek){
+                if(i <= firstDayOfWeek || i > daysInMonthLength + firstDayOfWeek){
                     daysInMonthArray.add("");
                 }
                 else{
@@ -173,12 +184,14 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
     }
 
     public void previousMonthAction(View view){
+        leftArrowAnim.playAnimation();
         LocalDate newDate = eggViewModel.getSelectedDate().minusMonths(1);
         eggViewModel.setSelectedDate(newDate);
         setMonthView();
     }
 
     public void nextMonthAction(View view){
+        rightArrowAnim.playAnimation();
         LocalDate newDate = eggViewModel.getSelectedDate().plusMonths(1);
         eggViewModel.setSelectedDate(newDate);
         setMonthView();
@@ -197,6 +210,14 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.activity_update_count);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.animation;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenHeight = displayMetrics.heightPixels;
+        int screenWidth = displayMetrics.widthPixels;
+        dialog.getWindow().getAttributes().width = screenWidth / 2;
+        dialog.getWindow().getAttributes().height = screenHeight / 2;
 
         TextView dateTextView = dialog.findViewById(R.id.tv_date);
         dateTextView.setText(dayText);
@@ -222,8 +243,8 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
                 EggRecord eNew = new EggRecord(e.getYear(), e.getMonth(), l);
                 eggViewModel.update(eNew);
 
-                //update calendar cell
-                setMonthView();
+                eggsInMonth.set(position, updatedEggCount);
+                calendarAdapter.notifyItemChanged(position);
 
                 //dismiss dialog
                 dialog.dismiss();
