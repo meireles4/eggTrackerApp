@@ -4,17 +4,22 @@
 
     <item
         android:id="@+id/menu_calendar"
-        android:title="Camera"
-        android:icon="@android:drawable/ic_menu_my_calendar"
-        android:contentDescription="Camera"
+        android:title="Calendar"
+        android:icon="@android:drawable/ic_search_category_default"
+        android:iconTint="@color/gray"
+        android:contentDescription="Calendar"
         app:showAsAction="ifRoom"
         />
 
     <item
-        android:id="@+id/more"
-        android:title="(In a future update)"
-        android:contentDescription="More"
-        app:showAsAction="never"
+        android:id="@+id/menu_today"
+        android:title="Today"
+        android:icon="@android:drawable/ic_menu_today"
+        android:contentDescription="Today"
+        app:showAsAction="ifRoom"
+        android:iconTint="@color/gray"
         />
+
+
 
 </menu>

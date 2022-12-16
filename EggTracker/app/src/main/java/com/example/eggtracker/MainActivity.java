@@ -5,6 +5,7 @@ import static java.lang.String.valueOf;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
     private RecyclerView calendarRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     CalendarAdapter calendarAdapter;
+    private boolean firstTimeOpeningApp = true;
 
     DatePickerDialog picker;
 
@@ -56,43 +58,52 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         calendarRecyclerView = findViewById(R.id.rv_calendar);
         layoutManager = new GridLayoutManager(getApplicationContext(), 7);
 
-
         monthYearText = findViewById(R.id.tv_monthYear);
-        leftArrowAnim = findViewById(R.id.animationViewPreviousMonth);
-        rightArrowAnim = findViewById(R.id.animationViewNextMonth);
 
+        leftArrowAnim = findViewById(R.id.animationViewPreviousMonth);
         leftArrowAnim.setOnClickListener(this::previousMonthAction);
+        rightArrowAnim = findViewById(R.id.animationViewNextMonth);
         rightArrowAnim.setOnClickListener(this::nextMonthAction);
 
         eggViewModel = new ViewModelProvider(this).get(EggViewModel.class);
 
-        ActionMenuItemView topMenuCalendar = findViewById(R.id.menu_calendar);
-
-        topMenuCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                final Calendar cldr = Calendar.getInstance();
-                int day = 1;
-                int month = eggViewModel.getSelectedDate().getMonth().getValue()-1;
-                int year = eggViewModel.getSelectedDate().getYear();
-
-                picker = new DatePickerDialog(MainActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                //monthOfYear = [0-11]. That's why we add +1
-                                LocalDate localDate = LocalDate.of(year, monthOfYear+1, 1);
-                                eggViewModel.setSelectedDate(localDate);
-                                setMonthView();
-                            }
-                        }, year, month, day);
-                picker.show();
-            }
-        });
+        initializeMenuItems();
 
         eggViewModel.setSelectedDate(LocalDate.now());
         setMonthView();
+    }
+
+    private void initializeMenuItems() {
+
+        //Item for searching dates
+        ActionMenuItemView topMenuCalendar = findViewById(R.id.menu_calendar);
+        topMenuCalendar.setOnClickListener(view -> {
+
+            int day = eggViewModel.getSelectedDate().getDayOfMonth();
+            int month = eggViewModel.getSelectedDate().getMonth().getValue()-1;
+            int year = eggViewModel.getSelectedDate().getYear();
+
+            picker = new DatePickerDialog(MainActivity.this,
+                    (view1, year1, monthOfYear, dayOfMonth) -> {
+                        //monthOfYear = [0-11]. That's why we add +1
+                        LocalDate localDate = LocalDate.of(year1, monthOfYear+1, dayOfMonth);
+                        eggViewModel.setSelectedDate(localDate);
+                        firstTimeOpeningApp = true;
+                        setMonthView();
+                    }, year, month, day);
+
+            picker.show();
+        });
+
+        //Item for returning to today
+        ActionMenuItemView topMenuReturnToToday = findViewById(R.id.menu_today);
+        topMenuReturnToToday.setOnClickListener( view -> {
+
+            eggViewModel.setSelectedDate(LocalDate.now());
+            firstTimeOpeningApp = true;
+            setMonthView();
+
+        });
     }
 
     private void setMonthView() {
@@ -107,6 +118,11 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
         eggsInMonth = eggsInMonthArray();
 
         calendarAdapter = new CalendarAdapter(eggsInMonth, daysInMonth, this);
+        if(firstTimeOpeningApp){
+            int day = daysInMonth.indexOf(valueOf(eggViewModel.getSelectedDate().getDayOfMonth()));
+            calendarAdapter.selectedPos = day ;
+            firstTimeOpeningApp = false;
+        }
 
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
@@ -200,6 +216,16 @@ public class MainActivity extends AppCompatActivity implements CalendarAdapter.O
 
     @Override
     public void onItemClick(int position, String dayText, String eggCount) {
+
+        calendarAdapter.notifyItemChanged(calendarAdapter.selectedPos);
+        calendarAdapter.selectedPos = position;
+        calendarAdapter.notifyItemChanged(position);
+
+        LocalDate selectedDate = LocalDate.of(eggViewModel.getSelectedDate().getYear(),
+                eggViewModel.getSelectedDate().getMonth().getValue(),
+                Integer.parseInt(dayText));
+        eggViewModel.setSelectedDate(selectedDate);
+
         String messageDay = dayText + " " + monthYearFromDate(eggViewModel.getSelectedDate());
         if(dayText != ""){
             showUpdateDialog(position ,messageDay, eggCount);

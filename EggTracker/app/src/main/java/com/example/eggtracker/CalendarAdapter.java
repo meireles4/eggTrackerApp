@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
     public List<String> eggsOfMonth;
     private final List<String> daysOfMonth;
     private final OnItemListener onItemListener;
+    public int selectedPos = RecyclerView.NO_POSITION;
 
     public CalendarAdapter(List<String> eggsOfMonth, List<String> daysOfMonth, OnItemListener onItemListener) {
         this.eggsOfMonth = eggsOfMonth;
@@ -30,7 +32,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
         View view = inflater.inflate(R.layout.calendar_cell, parent, false);
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
 
-        int viewHolderHeight = (int) (parent.getHeight() / 6);
+        int viewHolderHeight = parent.getHeight() / 6;
 
         layoutParams.height = viewHolderHeight;
         return new CalendarViewHolder(view, onItemListener);
@@ -38,6 +40,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
+
+        holder.itemView.setSelected(selectedPos == position);
 
         holder.dayOfMonth.setText(daysOfMonth.get(position));
         holder.eggCount.setText(eggsOfMonth.get(position));
@@ -55,4 +59,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
     public interface OnItemListener {
         void onItemClick(int position, String dayText, String eggCount);
     }
+
+
 }

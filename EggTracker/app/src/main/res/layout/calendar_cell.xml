@@ -11,9 +11,10 @@
         android:background="@color/gray" />
 
     <ImageView
+        android:id="@+id/iv_calendarCellWhite"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@drawable/selector"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
         android:layout_marginEnd="2dp"
@@ -46,13 +47,15 @@
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:text="2"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textColor="@color/black"/>
 
         <ImageView
             android:id="@+id/iv_egg"
             android:layout_width="18dp"
-            android:layout_height="18dp"
-            app:srcCompat="@drawable/egg_color" />
+            android:layout_height="18dp"/>
+            <!-- app:srcCompat="@drawable/egg_color" -->
+
 
     </LinearLayout>
 
